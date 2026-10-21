@@ -125,7 +125,7 @@ async function studentDashboard(ctx) {
       ${statCard({ icon: 'pencil-line', label: 'Exams to take', value: att.error || enr.error ? '—' : fmtNum(pending + inProgress.length, 0), hint: inProgress.length ? `${inProgress.length} in progress` : '', href: '#/student/exams' })}
       ${statCard({ icon: 'circle-check', label: 'Exams completed', value: att.error ? '—' : fmtNum(completed, 0), href: '#/student/history' })}
       ${statCard({ icon: 'award', label: 'Results available', value: res.error ? '—' : fmtNum(myRes.length, 0), href: '#/student/results' })}
-      ${statCard({ icon: 'trending-up', label: 'GPA (provisional)', value: gpa ? fmtNum(gpa.gpa, 2) : '—', hint: gpa ? 'Unofficial estimate' : 'No graded results yet', href: '#/student/performance' })}
+      ${statCard({ icon: 'trending-up', label: 'CGPA ', value: gpa ? fmtNum(gpa.gpa, 2) : '—', hint: gpa ? 'Cumulative GPA ' : 'No graded results yet', href: '#/student/performance' })}
     </section>
 
     ${inProgress.length ? alertBox('gold', html`You have ${inProgress.length} exam${inProgress.length > 1 ? 's' : ''} in progress: ${inProgress.map((s, i) => html`${i ? ', ' : ''}<a href="#/student/take/${s.attempt.id}">${s.attempt.courseCode || 'Resume'}</a>`)}.`, { title: 'Resume your exam.' }) : ''}
