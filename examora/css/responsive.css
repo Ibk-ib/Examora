@@ -63,3 +63,12 @@
 @media (prefers-reduced-motion: reduce) {
   .sidebar, .scrim, .menu-ico { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
 }
+.print-only { display: none; }
+
+@media print {
+  .topbar, .sidebar, .scrim, .page-header__actions, .btn, .cell-actions, .skip-link { display: none !important; }
+  .main { margin-left: 0 !important; padding-top: 0 !important; }
+  .print-only { display: block !important; margin-bottom: 16px; }
+  .card { box-shadow: none; break-inside: avoid; }
+  body { background: #fff; }
+}
