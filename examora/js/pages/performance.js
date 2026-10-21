@@ -1,13 +1,13 @@
-/** Academic performance. GPA here is an UNOFFICIAL, provisional estimate: the API has no GPA endpoint. */
+
 import { html } from '../html.js';
-import { table, loading, errorState, emptyState, alertBox, barList, lineChart, badge } from '../components.js';
+import { icon, table, loading, errorState, emptyState, barList, lineChart } from '../components.js';
 import { results, attempts, settle } from '../services.js';
 import { provisionalGpa, gradeDistribution, scoreText } from '../grades.js';
 import { fmtNum, fmtDate, delegate } from '../utils.js';
 
 async function performance(ctx) {
   const sid = ctx.session.studentId;
-  ctx.header({ title: 'Academic performance', description: 'Your grades, course results and examination history.' });
+  ctx.header({ title: 'Academic performance', description: 'Your cumulative GPA, course results and examination history.' });
   ctx.html(loading());
   const load = async () => {
     const [res, att] = await Promise.all([settle(results.byStudent(sid)), settle(attempts.byStudent(sid))]);
@@ -22,9 +22,10 @@ async function performance(ctx) {
       .sort((a, b) => new Date(a.d) - new Date(b.d)).map((x) => ({ label: x.r.courseCode, value: x.r.percentage }));
 
     ctx.html(html`<div class="stack">
-      <section class="card"><div class="card__header"><h2>GPA</h2>${badge('Provisional · unofficial', 'warning', true)}</div><div class="card__body stack stack--sm">
-        ${gpa ? html`<div class="gpa"><span class="gpa__value">${fmtNum(gpa.gpa, 2)}</span><span class="gpa__scale">across ${gpa.courses} course${gpa.courses === 1 ? '' : 's'} · ${gpa.credits} credit units</span></div>` : html`<p class="muted">A GPA can’t be estimated: results have no grade points or credit units.</p>`}
-        ${alertBox('info', 'The system does not provide an official GPA. This estimate weights the grade points supplied with each result by credit units. Your institution’s official GPA may differ.')}
+        <div class="print-only"><h2>Examora · Academic record</h2><p>Matric number: ${ctx.session.matricNumber || '—'} · Printed ${new Date().toLocaleDateString()}</p></div>
+        <section class="card"><div class="card__header"><h2>Cumulative GPA (CGPA)</h2><button type="button" class="btn btn--secondary btn--sm" data-print>${icon('printer')} Print</button></div><div class="card__body stack stack--sm">
+        ${gpa ? html`<div class="gpa"><span class="gpa__value">${fmtNum(gpa.gpa, 2)}</span><span class="gpa__scale">across ${gpa.courses} course${gpa.courses === 1 ? '' : 's'} · ${gpa.credits} credit units</span></div>` : html`<p class="muted">Your CGPA will appear once your results include grade points and credit units.</p>`}
+        <p class="dash-note">CGPA = total quality points ÷ total credit units, where quality points = grade point × credit units for each course.</p>
       </div></section>
       <div class="grid grid--2">
         <section class="card"><div class="card__header"><h2>Grade distribution</h2></div><div class="card__body">${barList(gradeDistribution(res.value))}</div></section>
@@ -37,6 +38,7 @@ async function performance(ctx) {
         { label: 'Grade', render: (r) => html`<span class="grade-pill">${r.grade || '—'}</span>` },
         { label: 'Grade point', className: 'num', render: (r) => fmtNum(r.gradePoint, 2) },
         { label: 'Credit units', className: 'num', render: (r) => r.creditUnit },
+        { label: 'Quality points', className: 'num', render: (r) => (Number.isFinite(r.gradePoint) && r.creditUnit > 0 ? fmtNum(r.gradePoint * r.creditUnit, 2) : '—') },
         { label: '', className: 'cell-actions', render: (r) => html`<a class="btn btn--secondary btn--sm" href="#/student/results/${r.id}">Details</a>` },
       ], res.value, { caption: 'Course results' })}</section>
       <section class="card card--flush"><div class="card__header"><h2>Examination history</h2><a class="btn btn--secondary btn--sm" href="#/student/history">Full history</a></div>${att.error ? errorState(att.error, { retry: false }) : submitted.length ? table([
@@ -46,6 +48,7 @@ async function performance(ctx) {
     </div>`);
   };
   delegate(ctx.root, 'click', '[data-action="retry"]', load);
+  delegate(ctx.root, 'click', '[data-print]', () => window.print());
   await load();
 }
 
