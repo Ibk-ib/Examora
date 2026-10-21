@@ -1,0 +1,42 @@
+.auth { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); min-height: 100vh; }
+
+/* ---- Picture panel ---- */
+.auth__brand {
+  position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding: 48px;
+  color: #fff; background: #1A1A1A url('../img/Authjpg.jpg') center / cover no-repeat; overflow: hidden;
+}
+.auth__brand::before { content: ''; position: absolute; inset: 0; background: rgba(26, 26, 26, 0.6); }
+.auth__brand > * { position: relative; z-index: 1; }
+.auth__brand .brand { color: #fff; font-size: 1.5rem; }
+.auth__brand :focus-visible { outline-color: #fff; }
+.auth__hero h1 { color: #fff; font-size: 2.5rem; max-width: 14ch; line-height: 1.15; }
+.auth__hero h1 span { color: var(--c-gold); }
+.auth__hero p { margin-top: 16px; color: rgba(255, 255, 255, 0.85); max-width: 42ch; }
+.auth__points { display: flex; flex-direction: column; gap: 12px; color: rgba(255, 255, 255, 0.9); font-size: var(--fs-label); }
+.auth__points li { display: flex; gap: 10px; align-items: center; }
+.auth__points .icon { color: var(--c-gold); }
+
+/* ---- Form side: soft glows behind a frosted-glass card ---- */
+.auth__panel { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; padding: 32px 24px; background: var(--c-bg); overflow: hidden; }
+.auth__panel::before { content: ''; position: absolute; inset: -30px; z-index: -2; background: url('../img/Authjpg.jpg') center / cover no-repeat; filter: blur(16px); }
+.auth__panel::after { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(255, 248, 240, 0.45); }
+
+.auth__card {
+  position: relative; z-index: 1; width: min(100%, 460px); padding: 36px;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.75); border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(150, 90, 10, 0.18);
+}
+.auth__card--wide { width: min(100%, 620px); }
+.auth__card .input, .auth__card .select { background: rgba(255, 255, 255, 0.75); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .auth__card { background: rgba(255, 255, 255, 0.92); }
+}
+
+.auth__card h2 { font-size: 1.625rem; }
+.auth__sub { margin: 6px 0 24px; color: var(--c-muted); }
+.auth__foot { margin-top: 20px; text-align: center; font-size: var(--fs-label); color: var(--c-muted); }
+.auth__foot a { font-weight: 600; }
+.auth__mobile-brand { display: none; }
+.api-hint { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--c-border); font-size: var(--fs-small); color: var(--c-muted); text-align: center; word-break: break-all; }
