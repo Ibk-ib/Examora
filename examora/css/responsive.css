@@ -46,7 +46,15 @@
   .answer-pick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .qgrid { grid-template-columns: repeat(5, 1fr); }
   .question__text { font-size: 1.125rem; }
-  .auth__card { padding: 24px 20px; }
+   
+  .auth__panel { padding: 16px 10px; }
+  .auth__card, .auth__card--wide { width: 100%; max-width: 100%; padding: 22px 16px; }
+  .auth__card h2 { font-size: 1.25rem; line-height: 1.25; }
+  .auth__sub { font-size: 0.8125rem; margin: 4px 0 16px; }
+  .auth, .auth__panel { max-width: 100%; overflow-x: hidden; }
+  .auth__card, .form-grid > * { min-width: 0; }
+  .input, .select { min-width: 0; max-width: 100%; }
+  html, body { overflow-x: hidden; }
   .bars__row { grid-template-columns: 70px 1fr auto; }
   .complete { padding: 28px 18px; }
 
