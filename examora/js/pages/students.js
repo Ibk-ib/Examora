@@ -130,6 +130,7 @@ async function studentForm(ctx) {
     <div class="form-grid" style="margin-top:${editing ? 0 : 18}px">
       ${field({ name: 'firstName', label: 'First name', required: true, value: s.firstName })}
       ${field({ name: 'lastName', label: 'Last name', required: true, value: s.lastName })}
+      ${editing ? '' : field({ name: 'matricNumber', label: 'Matriculation number', required: true, value: '' })}
       ${field({ name: 'email', label: 'Email', type: 'email', required: true, value: s.email, full: true })}
       ${field({ name: 'department', label: 'Department', required: true, value: s.department })}
       ${field({ name: 'level', label: 'Level', type: 'number', required: true, min: 1, step: 1, value: s.level, inputmode: 'numeric' })}
@@ -140,11 +141,13 @@ async function studentForm(ctx) {
   const form = ctx.root.querySelector('#student-form');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!validate(form, {
+        const schema = {
       firstName: [rules.required('First name')], lastName: [rules.required('Last name')],
-      email: [rules.required('Email'), rules.email], matricNumber: [rules.required('Matriculation number')],
+      email: [rules.required('Email'), rules.email],
       department: [rules.required('Department')], level: [rules.required('Level'), rules.integer('Level', { min: 1 })],
-    })) return;
+    };
+    if (!editing) schema.matricNumber = [rules.required('Matriculation number')];
+    if (!validate(form, schema)) return;
     const v = formValues(form);
     const dto = {
       firstName: v.firstName.trim(), lastName: v.lastName.trim(), email: v.email.trim(),
