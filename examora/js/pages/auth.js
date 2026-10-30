@@ -90,11 +90,10 @@ export function registerPage(ctx) {
       <div class="form-grid">
         ${field({ name: 'firstName', label: 'First name', required: true, autocomplete: 'given-name' })}
         ${field({ name: 'lastName', label: 'Last name', required: true, autocomplete: 'family-name' })}
-        ${field({ name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email', full: true })}
-        ${field({ name: 'matricNumber', label: 'Matriculation number', required: true, autocomplete: 'username' })}
+        ${field({ name: 'email', label: 'Email', type: 'email', required: true, autocomplete: 'email' })}
+        ${field({ name: 'matricNumber', label: 'Matric number', required: true, autocomplete: 'username' })}
         ${field({ name: 'department', label: 'Department', required: true })}
-        ${field({ name: 'level', label: 'Level', type: 'number', required: true, min: 1, step: 1, inputmode: 'numeric', hint: 'For example 100, 200, 300.' })}
-        <div></div>
+        ${field({ name: 'level', label: 'Level', type: 'number', required: true, min: 1, step: 1, inputmode: 'numeric', hint: 'E.g. 100, 200, 300.' })}
         ${passwordField({ name: 'password', label: 'Password', autocomplete: 'new-password' })}
         ${passwordField({ name: 'confirmPassword', label: 'Confirm password', autocomplete: 'new-password' })}
       </div>
