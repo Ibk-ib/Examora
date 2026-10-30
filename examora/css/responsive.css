@@ -35,6 +35,9 @@
   .btn--sm { min-height: 40px; }
   .input, .select { min-height: 46px; }
   .form-grid { grid-template-columns: minmax(0, 1fr); }
+    #register-form .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 10px; }
+  #register-form .label { font-size: 0.8125rem; }
+  #register-form .input { padding-left: 10px; padding-right: 10px; }
   .dl { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
   .dl dd { margin-bottom: 10px; }
   .toolbar .field { flex: 1 1 100%; }
