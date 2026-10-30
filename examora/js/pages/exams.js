@@ -97,37 +97,47 @@ async function adminExamDetails(ctx) {
 /* ---------------- Student ---------------- */
 async function availableExams(ctx) {
   const sid = ctx.session.studentId;
-  ctx.header({ title: 'Available exams', description: 'Examinations for courses you are enrolled in.' });
+  ctx.header({ title: 'Available exams', description: 'All examinations. You can only take the exam for a course you are enrolled in.' });
   ctx.html(loading());
 
   const load = async () => {
-    const [enr, att] = await Promise.all([settle(enrollments.mine(sid)), settle(attempts.byStudent(sid))]);
+    const [enr, att, crs] = await Promise.all([settle(enrollments.mine(sid)), settle(attempts.byStudent(sid)), settle(courses.all())]);
     if (!ctx.alive()) return;
+    if (crs.error) { ctx.html(html`<div class="card">${errorState(crs.error)}</div>`); return; }
     if (enr.error) { ctx.html(html`<div class="card">${errorState(enr.error)}</div>`); return; }
-    if (!enr.value.length) {
-      ctx.html(html`<div class="card">${emptyState({ icon: 'pencil-line', title: 'No exams yet', text: 'You must enroll in a course before you can take its exam.', action: { label: 'Browse courses', href: '#/student/courses' } })}</div>`);
+    if (!crs.value.length) {
+      ctx.html(html`<div class="card">${emptyState({ icon: 'pencil-line', title: 'No exams yet', text: 'No courses have been created yet. Please check back later.' })}</div>`);
       return;
     }
-    const counts = await Promise.all(enr.value.map((e) => settle(questions.countForCourse(e.courseId))));
+    const enrolledIds = new Set(enr.value.map((e) => e.courseId));
+    const counts = await Promise.all(crs.value.map((c) => settle(questions.countForCourse(c.id))));
     if (!ctx.alive()) return;
-    const rows = enr.value.map((e, i) => ({ e, q: counts[i], st: att.error ? null : examStatus(att.value, e.courseId) }));
+    // Enrolled courses first, then the rest
+    const rows = crs.value
+      .map((c, i) => ({ c, q: counts[i], enrolled: enrolledIds.has(c.id), st: att.error ? null : examStatus(att.value, c.id) }))
+      .sort((a, b) => Number(b.enrolled) - Number(a.enrolled));
 
     ctx.html(html`<div class="stack">
       ${att.error ? alertBox('warning', 'Your exam history could not be loaded, so exams can’t be started right now.') : ''}
-      <div class="grid grid--cards">${rows.map(({ e, q, st }) => {
+      <div class="grid grid--cards">${rows.map(({ c, q, enrolled, st }) => {
         const qn = q.error ? null : q.value;
-        let status; let action;
-        if (!st) { status = badge('Unavailable', 'neutral'); action = ''; }
+        let status; let action; let note = '';
+        if (!enrolled) {
+          status = badge('Not enrolled', 'neutral');
+          action = html`<button type="button" class="btn btn--primary btn--sm" disabled>Start exam</button>`;
+          note = html`<p class="muted" style="margin:0 0 12px">${icon('lock')} Enroll in this course before taking its exam.</p>`;
+        } else if (!st) { status = badge('Unavailable', 'neutral'); action = ''; }
         else if (st.state === 'in-progress') { status = badge('In progress', 'warning'); action = html`<a class="btn btn--primary btn--sm" href="#/student/take/${st.attempt.id}">Resume exam</a>`; }
         else if (st.state === 'completed') { status = badge('Completed', 'success'); action = html`<a class="btn btn--secondary btn--sm" href="#/student/history">View history</a>`; }
         else if (qn === null) { status = badge('Unavailable', 'neutral'); action = ''; }
         else if (qn === 0) { status = badge('No questions yet', 'neutral'); action = ''; }
-        else { status = badge('Available', 'gold'); action = html`<a class="btn btn--primary btn--sm" href="#/student/exams/${e.courseId}/instructions">Start exam</a>`; }
+        else { status = badge('Available', 'gold'); action = html`<a class="btn btn--primary btn--sm" href="#/student/exams/${c.id}/instructions">Start exam</a>`; }
         return html`<article class="card course-card">
-          <div class="row row--between"><span class="course-card__code">${e.courseCode}</span>${status}</div>
-          <h3>${e.courseTitle}</h3>
-          <div class="course-card__meta"><span class="chip">${qn === null ? 'Questions: unknown' : `${qn} question${qn === 1 ? '' : 's'}`}</span><span class="chip">Enrolled</span></div>
-          <div class="course-card__actions">${action}<a class="btn btn--secondary btn--sm" href="#/student/courses/${e.courseId}">Course</a></div>
+          <div class="row row--between"><span class="course-card__code">${c.courseCode}</span>${status}</div>
+          <h3>${c.courseTitle}</h3>
+          <div class="course-card__meta"><span class="chip">${qn === null ? 'Questions: unknown' : `${qn} question${qn === 1 ? '' : 's'}`}</span>${enrolled ? html`<span class="chip">Enrolled</span>` : ''}</div>
+          ${note}
+          <div class="course-card__actions">${action}<a class="btn btn--secondary btn--sm" href="#/student/courses/${c.id}">${enrolled ? 'Course' : 'Enroll'}</a></div>
         </article>`;
       })}</div>
     </div>`);
