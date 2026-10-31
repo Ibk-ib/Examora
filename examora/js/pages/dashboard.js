@@ -4,7 +4,7 @@ import { api, fetchAllPages } from '../api.js';
 import { statCard, table, badge, barList, errorState, loading, alertBox, icon, emptyState } from '../components.js';
 import { fmtNum, fmtDateTime, fullName, uniqueSorted, delegate } from '../utils.js';
 import { students, courses, enrollments, questions, attempts, results, examStatus, settle } from '../services.js';
-import { gradeDistribution, provisionalGpa, degreeClass, fmtGpa } from '../grades.js';
+import { gradeDistribution, provisionalGpa, fmtGpa } from '../grades.js';
 
 const count = (path) => api.get(path, { pageNumber: 1, pageSize: 1 }).then((e) => e.data?.totalCount ?? 0);
 const val = (s, fmt = fmtNum) => (s.error ? html`<span title="Unavailable: ${s.error.message}">—</span>` : fmt(s.value));

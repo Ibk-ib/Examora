@@ -2,7 +2,7 @@
 import { html } from '../html.js';
 import { icon, table, loading, errorState, emptyState, barList, lineChart } from '../components.js';
 import { results, attempts, settle } from '../services.js';
-import { provisionalGpa, gradeDistribution, scoreText, degreeClass, fmtGpa } from '../grades.js';
+import { provisionalGpa, gradeDistribution, scoreText, fmtGpa } from '../grades.js';
 import { fmtNum, fmtDate, delegate } from '../utils.js';
 
 async function performance(ctx) {
