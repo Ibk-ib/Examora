@@ -1,15 +1,4 @@
-/**
- * Authentication and session handling.
- *
- * Storage trade-off (the API only returns a JWT in the response body, so an
- * HttpOnly cookie is not possible without backend changes):
- *   - Default: sessionStorage, cleared when the tab closes.
- *   - "Remember me": localStorage, survives restarts.
- * Either way, any script running on this origin can read the token (XSS risk).
- * This is mitigated by escaping all API data in templates and loading no third-party
- * scripts beyond the pinned icon library, but it is not "secure storage".
- * Passwords are never stored. Role checks here only shape the UI; the API enforces access.
- */
+
 import { api, configureApi } from './api.js';
 import { CONFIG } from './config.js';
 import { parseDate } from './utils.js';
