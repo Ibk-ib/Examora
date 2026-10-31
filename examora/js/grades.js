@@ -1,9 +1,4 @@
-/**
- * Grade helpers. IMPORTANT: the API has no GPA endpoint, so any GPA computed here
- * is a PROVISIONAL client-side estimate from backend-supplied gradePoint and creditUnit,
- * shown separately from official results. Grade boundaries are never computed here:
- * grade, gradePoint and percentage always come from the API.
- */
+
 import { fmtNum } from './utils.js';
 
 export function provisionalGpa(resultList) {
@@ -30,3 +25,7 @@ export const averagePercent = (resultList) =>
   resultList.length ? resultList.reduce((s, r) => s + (r.percentage || 0), 0) / resultList.length : null;
 
 export const scoreText = (r) => `${fmtNum(r.score)} / ${fmtNum(r.totalMarks)}`;
+
+
+export const fmtGpa = (n) =>
+  Number(n).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 2 });

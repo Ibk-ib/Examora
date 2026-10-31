@@ -4,7 +4,7 @@ import { api, fetchAllPages } from '../api.js';
 import { statCard, table, badge, barList, errorState, loading, alertBox, icon, emptyState } from '../components.js';
 import { fmtNum, fmtDateTime, fullName, uniqueSorted, delegate } from '../utils.js';
 import { students, courses, enrollments, questions, attempts, results, examStatus, settle } from '../services.js';
-import { gradeDistribution, provisionalGpa } from '../grades.js';
+import { gradeDistribution, provisionalGpa, degreeClass, fmtGpa } from '../grades.js';
 
 const count = (path) => api.get(path, { pageNumber: 1, pageSize: 1 }).then((e) => e.data?.totalCount ?? 0);
 const val = (s, fmt = fmtNum) => (s.error ? html`<span title="Unavailable: ${s.error.message}">—</span>` : fmt(s.value));
@@ -125,7 +125,7 @@ async function studentDashboard(ctx) {
       ${statCard({ icon: 'pencil-line', label: 'Exams to take', value: att.error || enr.error ? '—' : fmtNum(pending + inProgress.length, 0), hint: inProgress.length ? `${inProgress.length} in progress` : '', href: '#/student/exams' })}
       ${statCard({ icon: 'circle-check', label: 'Exams completed', value: att.error ? '—' : fmtNum(completed, 0), href: '#/student/history' })}
       ${statCard({ icon: 'award', label: 'Results available', value: res.error ? '—' : fmtNum(myRes.length, 0), href: '#/student/results' })}
-      ${statCard({ icon: 'trending-up', label: 'CGPA ', value: gpa ? fmtNum(gpa.gpa, 2) : '—', hint: gpa ? 'Cumulative GPA ' : 'No graded results yet', href: '#/student/performance' })}
+      ${statCard({ icon: 'trending-up', label: 'CGPA ', value: gpa ? fmtGpa(gpa.gpa) : '—', hint: gpa ? 'Cumulative GPA ' : 'No graded results yet', href: '#/student/performance' })}
     </section>
 
     ${inProgress.length ? alertBox('gold', html`You have ${inProgress.length} exam${inProgress.length > 1 ? 's' : ''} in progress: ${inProgress.map((s, i) => html`${i ? ', ' : ''}<a href="#/student/take/${s.attempt.id}">${s.attempt.courseCode || 'Resume'}</a>`)}.`, { title: 'Resume your exam.' }) : ''}

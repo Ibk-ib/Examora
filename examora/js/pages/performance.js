@@ -2,7 +2,7 @@
 import { html } from '../html.js';
 import { icon, table, loading, errorState, emptyState, barList, lineChart } from '../components.js';
 import { results, attempts, settle } from '../services.js';
-import { provisionalGpa, gradeDistribution, scoreText } from '../grades.js';
+import { provisionalGpa, gradeDistribution, scoreText, degreeClass, fmtGpa } from '../grades.js';
 import { fmtNum, fmtDate, delegate } from '../utils.js';
 
 async function performance(ctx) {
@@ -24,8 +24,7 @@ async function performance(ctx) {
     ctx.html(html`<div class="stack">
         <div class="print-only"><h2>Examora · Academic record</h2><p>Matric number: ${ctx.session.matricNumber || '—'} · Printed ${new Date().toLocaleDateString()}</p></div>
         <section class="card"><div class="card__header"><h2>Cumulative GPA (CGPA)</h2><button type="button" class="btn btn--secondary btn--sm" data-print>${icon('printer')} Print</button></div><div class="card__body stack stack--sm">
-        ${gpa ? html`<div class="gpa"><span class="gpa__value">${fmtNum(gpa.gpa, 2)}</span><span class="gpa__scale">across ${gpa.courses} course${gpa.courses === 1 ? '' : 's'} · ${gpa.credits} credit units</span></div>` : html`<p class="muted">Your CGPA will appear once your results include grade points and credit units.</p>`}
-        <p class="dash-note">CGPA = total quality points ÷ total credit units, where quality points = grade point × credit units for each course.</p>
+        ${gpa ? html`<div class="gpa"><span class="gpa__value">${fmtGpa(gpa.gpa)}</span><span class="gpa__scale">across ${gpa.courses} course${gpa.courses === 1 ? '' : 's'} · ${gpa.credits} credit units</span></div>` : html`<p class="muted">Your CGPA will appear once your results include grade points and credit units.</p>`}
       </div></section>
       <div class="grid grid--2">
         <section class="card"><div class="card__header"><h2>Grade distribution</h2></div><div class="card__body">${barList(gradeDistribution(res.value))}</div></section>
